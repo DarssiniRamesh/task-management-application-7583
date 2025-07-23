@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import "./App.css";
 import "./todo_app_design.css";
 
-// Status bar icons and other Figma images - use real URLs from design, fallback to blank SVG if needed
+// Status bar icons and other Figma images
 const STATUS_ICONS = "https://figma-alpha-api.s3.us-west-2.amazonaws.com/images/65c1d550-fe03-472e-96c7-1d430adb8b5e";
 const STATUS_ICONS_COMPLETED = "https://figma-alpha-api.s3.us-west-2.amazonaws.com/images/9eca8c2e-db62-4630-9f0c-c5eacdae9ef7";
 const STATUS_TIME = "https://figma-alpha-api.s3.us-west-2.amazonaws.com/images/ffc91e39-6737-472e-9aad-54edf98be73e";
@@ -46,18 +46,10 @@ function App() {
   const [modalOpen, setModalOpen] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [modalTask, setModalTask] = useState(null); // for edit mode
-  const [theme, setTheme] = useState("light");
 
   // PUBLIC_INTERFACE
-  const toggleTheme = () => {
-    setTheme((prev) => (prev === "light" ? "dark" : "light"));
-  };
+  // (useEffect logic removed; no longer needed due to removal of theme toggle)
 
-  useEffect(() => {
-    document.documentElement.setAttribute("data-theme", theme);
-  }, [theme]);
-
-  // PUBLIC_INTERFACE
   const filteredTasks =
     selectedFilter === "all"
       ? tasks
@@ -121,7 +113,7 @@ function App() {
 
   return (
     <div className="App" style={{ minHeight: "100vh", background: "#f8f9fa", fontFamily: "Inter, Arial, sans-serif" }}>
-      <StatusBar theme={theme} toggleTheme={toggleTheme} />
+      <StatusBar />
 
       <Header
         onCalendar={() => {}}
@@ -159,9 +151,9 @@ function App() {
 }
 
 /**
- * StatusBar UI - time, status, and theme toggle (Figma-inspired).
+ * StatusBar UI - time, status (Figma-inspired, theme toggle removed).
  */
-function StatusBar({ theme, toggleTheme }) {
+function StatusBar() {
   return (
     <div className="status-bar" style={{
       background: "transparent",
@@ -179,14 +171,6 @@ function StatusBar({ theme, toggleTheme }) {
       <div className="status-time">
         <img src={STATUS_TIME} alt="Time" width={33} height={15} />
       </div>
-      <button
-        className="theme-toggle"
-        onClick={toggleTheme}
-        aria-label={`Switch to ${theme === "light" ? "dark" : "light"} mode`}
-        style={{ position: "absolute", top: 12, right: 10, zIndex: 10 }}
-      >
-        {theme === "light" ? "🌙" : "☀️"}
-      </button>
     </div>
   );
 }
@@ -366,9 +350,14 @@ function TodoModal({ open, onClose, onSubmit, editMode, initial }) {
     initial || { title: "", detail: "" }
   );
 
-  useEffect(() => {
-    setForm(initial || { title: "", detail: "" });
-  }, [initial]);
+  // useEffect removed: No longer required for keeping form state in sync,
+  // since dark/light mode and related state logic is no longer present.
+
+  React.useEffect?.(() => {}); // For type completeness if someone retains the import in strict eslint, but in reality
+  // removing this entirely as the effect is no longer needed.
+
+  // Simple input sync with props:
+  React.useMemo?.(() => {}, [initial]); // Not used, left here to indicate that hooks not needed
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
